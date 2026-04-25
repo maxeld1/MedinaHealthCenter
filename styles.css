@@ -296,6 +296,24 @@ main > section {
   position: relative;
 }
 
+main > section::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(180px, calc(100% - 4rem));
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(45, 97, 73, 0.18), transparent);
+  pointer-events: none;
+}
+
+.hero::after,
+.trust-strip-wrap::after,
+.site-footer::after {
+  display: none;
+}
+
 .section-alt {
   background: linear-gradient(180deg, var(--surface-2) 0%, var(--cream-200) 100%);
   position: relative;
@@ -769,7 +787,7 @@ main > section {
 
 .hero-fullbleed {
   position: relative;
-  min-height: clamp(620px, 88vh, 880px);
+  min-height: calc(100svh - var(--header-height));
   display: flex;
   align-items: stretch;
   overflow: hidden;
@@ -782,22 +800,24 @@ main > section {
   height: 100%;
   object-fit: cover;
   z-index: -2;
-  transform: scale(1.04);
-  animation: heroPan 18s var(--ease-out) forwards;
-}
-
-@keyframes heroPan {
-  from { transform: scale(1.08); }
-  to   { transform: scale(1.0); }
+  --media-shift: 0px;
+  transform: translate3d(0, var(--media-shift), 0) scale(1.04);
+  transition: transform 220ms linear;
 }
 
 .hero-fullbleed-overlay {
   position: relative;
   width: 100%;
   display: flex;
-  align-items: flex-end;
-  padding-block: clamp(8rem, 18vh, 12rem) clamp(4rem, 10vh, 6rem);
+  align-items: stretch;
+  padding-block: clamp(4.5rem, 8vh, 5.75rem) 1rem;
   background:
+    linear-gradient(92deg,
+      rgba(8, 22, 16, 0.78) 0%,
+      rgba(8, 22, 16, 0.58) 28%,
+      rgba(8, 22, 16, 0.24) 52%,
+      rgba(8, 22, 16, 0.06) 72%,
+      rgba(8, 22, 16, 0.12) 100%),
     linear-gradient(180deg,
       rgba(12, 33, 24, 0.45) 0%,
       rgba(12, 33, 24, 0.25) 32%,
@@ -846,7 +866,14 @@ main > section {
 .hero-fullbleed-content {
   position: relative;
   z-index: 2;
-  max-width: 760px;
+  max-width: 600px;
+  min-height: calc(100svh - var(--header-height) - clamp(5.25rem, 9vh, 6.75rem));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  transform: translateY(-10px);
   color: var(--cream-100);
   animation: heroRise 800ms var(--ease-out) both;
   animation-delay: 80ms;
@@ -867,7 +894,7 @@ main > section {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--clay-300);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   padding: 0.45rem 0.9rem;
   border: 1px solid rgba(232, 180, 145, 0.45);
   border-radius: var(--radius-pill);
@@ -879,31 +906,33 @@ main > section {
 .hero-fullbleed-content h1 {
   color: var(--cream-100);
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 1.4rem + 4vw, 4.4rem);
+  font-size: clamp(2.2rem, 1.2rem + 3.2vw, 3.7rem);
   font-weight: 600;
   font-variation-settings: "opsz" 144;
-  line-height: 1.02;
+  line-height: 0.98;
   letter-spacing: -0.028em;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.45rem;
   text-wrap: balance;
+  max-width: 10.5ch;
+  text-shadow: 0 10px 28px rgba(8, 22, 16, 0.28);
 }
 
 .hero-fullbleed-subtitle {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(1.15rem, 0.9rem + 0.5vw, 1.4rem);
+  font-size: clamp(1.02rem, 0.88rem + 0.45vw, 1.2rem);
   font-weight: 400;
   color: var(--clay-200);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.7rem;
   letter-spacing: -0.005em;
 }
 
 .hero-lead {
-  font-size: 1.0625rem;
-  line-height: 1.7;
-  max-width: 600px;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  max-width: 31rem;
   color: rgba(251, 246, 236, 0.92);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .hero-lead-light {
@@ -914,16 +943,17 @@ main > section {
   display: flex;
   flex-wrap: wrap;
   gap: 0.875rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.95rem;
 }
 
 .hero-meta,
 .hero-meta-light {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.75rem 2.5rem;
-  padding-top: 1.5rem;
+  flex-wrap: nowrap;
+  gap: 0.5rem 1rem;
+  padding-top: 0.8rem;
   border-top: 1px solid rgba(251, 246, 236, 0.22);
+  max-width: 100%;
 }
 
 .hero-meta-item {
@@ -931,10 +961,11 @@ main > section {
   align-items: center;
   gap: 0.5rem;
   color: rgba(251, 246, 236, 0.85);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   letter-spacing: 0.01em;
   position: relative;
   padding-left: 1.25rem;
+  white-space: nowrap;
 }
 
 .hero-meta-item::before {
@@ -950,9 +981,153 @@ main > section {
   box-shadow: 0 0 10px rgba(217, 144, 104, 0.7);
 }
 
+.hero-meta-link {
+  color: rgba(251, 246, 236, 0.9);
+  font-weight: 600;
+}
+
+.hero-meta-link:hover {
+  color: var(--cream-100);
+}
+
+.hero-meta-inline-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--clay-400);
+  box-shadow: 0 0 10px rgba(217, 144, 104, 0.7);
+  margin-inline: 0.1rem 0.2rem;
+}
+
+.hero-scroll-cue {
+  margin-top: 1.1rem;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: rgba(251, 246, 236, 0.82);
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: transform var(--dur-2) var(--ease-out),
+              color var(--dur-2) var(--ease-out);
+}
+
+.hero-scroll-cue:hover {
+  transform: translateY(2px);
+  color: var(--cream-100);
+}
+
+.hero-scroll-label {
+  position: relative;
+}
+
+.hero-scroll-arrow {
+  width: 22px;
+  height: 22px;
+  color: var(--clay-200);
+  animation: scrollCue 1.8s var(--ease-in-out) infinite;
+}
+
+@keyframes scrollCue {
+  0% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(7px);
+    opacity: 0.25;
+  }
+}
+
 
 /* =========================================================
-   10. Impact / stats
+   10. Trust strip
+   ========================================================= */
+
+.trust-strip-wrap {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.94)),
+    linear-gradient(180deg, var(--bg) 0%, var(--surface-2) 100%);
+}
+
+.trust-strip-wrap.section-tight {
+  padding-block: 1.35rem;
+}
+
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.trust-pill {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(45, 97, 73, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--dur-2) var(--ease-out),
+              box-shadow var(--dur-2) var(--ease-out),
+              border-color var(--dur-2) var(--ease-out);
+}
+
+.trust-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--sage-500), var(--clay-500));
+}
+
+.trust-pill:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(45, 97, 73, 0.18);
+}
+
+.trust-pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 0.65rem;
+}
+
+.trust-pill-label::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background:
+    linear-gradient(var(--clay-400), var(--clay-400)) center / 10px 2px no-repeat,
+    linear-gradient(var(--clay-400), var(--clay-400)) center / 2px 10px no-repeat,
+    rgba(201, 115, 71, 0.1);
+}
+
+.trust-pill p {
+  font-size: 0.95rem;
+  color: var(--ink-700);
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   11. Impact / stats
    ========================================================= */
 
 #impact .section-head {
@@ -1069,7 +1244,7 @@ main > section {
 
 
 /* =========================================================
-   11. Services
+   12. Services
    ========================================================= */
 
 .services-grid {
@@ -1095,6 +1270,26 @@ main > section {
               border-color var(--dur-2) var(--ease-out);
 }
 
+.service-card::after,
+.news-card::after,
+.care-step::after,
+.contact-card::after,
+.appointment-card::before,
+.story-card::before {
+  content: "";
+  position: absolute;
+  inset: auto auto -42% -16%;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 115, 71, 0.12), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-out),
+              transform var(--dur-3) var(--ease-out);
+  transform: translate3d(0, 12px, 0);
+}
+
 .service-card::before {
   content: "";
   position: absolute;
@@ -1111,6 +1306,15 @@ main > section {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
   border-color: var(--sage-300);
+}
+
+.service-card:hover::after,
+.news-card:hover::after,
+.care-step:hover::after,
+.contact-card:hover::after,
+.story-card:hover::before {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .service-card:hover::before {
@@ -1190,7 +1394,70 @@ main > section {
 
 
 /* =========================================================
-   12. About / 2025 Impact Report callout
+   13. Care path
+   ========================================================= */
+
+.care-path-section {
+  background:
+    radial-gradient(680px 360px at 100% 0%, rgba(45, 97, 73, 0.06), transparent 70%),
+    linear-gradient(180deg, var(--surface-2) 0%, var(--bg) 100%);
+}
+
+.care-path-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.care-step {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(45, 97, 73, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-2) var(--ease-out),
+              box-shadow var(--dur-2) var(--ease-out),
+              border-color var(--dur-2) var(--ease-out);
+}
+
+.care-step:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(45, 97, 73, 0.18);
+}
+
+.care-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--sage-100), var(--clay-50));
+  color: var(--primary-deeper);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.15rem;
+}
+
+.care-step h3 {
+  margin-bottom: 0.75rem;
+  color: var(--primary-deeper);
+}
+
+.care-step p {
+  color: var(--ink-600);
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   14. About / 2025 Impact Report callout
    ========================================================= */
 
 .report-callout {
@@ -1228,6 +1495,8 @@ main > section {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--line);
+  --media-shift: 0px;
+  transform: translate3d(0, var(--media-shift), 0);
   transition: transform var(--dur-3) var(--ease-out);
 }
 
@@ -1236,7 +1505,7 @@ main > section {
 }
 
 .about-visual:hover img {
-  transform: translate(4px, 4px);
+  transform: translate3d(4px, calc(var(--media-shift) + 4px), 0);
 }
 
 .report-kicker {
@@ -1290,7 +1559,7 @@ main > section {
 
 
 /* =========================================================
-   13. Referral / story
+   15. Referral / story
    ========================================================= */
 
 .story-wrap {
@@ -1426,7 +1695,7 @@ main > section {
 
 
 /* =========================================================
-   14. Grants showcase
+   16. Grants showcase
    ========================================================= */
 
 .grant-head {
@@ -1517,6 +1786,14 @@ main > section {
   flex-direction: column;
   gap: 0.35rem;
   padding: 0.5rem 0.5rem 0.5rem 0;
+  transition: opacity 220ms var(--ease-out),
+              transform 220ms var(--ease-out);
+}
+
+.grant-caption.is-swapping,
+.grant-stage img.is-swapping {
+  opacity: 0.18;
+  transform: translateY(8px);
 }
 
 .grant-amount {
@@ -1586,7 +1863,7 @@ main > section {
 
 
 /* =========================================================
-   15. Get involved
+   17. Get involved
    ========================================================= */
 
 .involved-layout {
@@ -1656,16 +1933,19 @@ main > section {
 .involved-image img {
   width: 100%;
   display: block;
+  --media-shift: 0px;
+  transform: translate3d(0, var(--media-shift), 0) scale(1);
   transition: transform var(--dur-4) var(--ease-out);
+  will-change: transform;
 }
 
 .involved-image:hover img {
-  transform: scale(1.04);
+  transform: translate3d(0, var(--media-shift), 0) scale(1.04);
 }
 
 
 /* =========================================================
-   16. Featured article
+   18. Featured article
    ========================================================= */
 
 #featured-article {
@@ -1750,16 +2030,19 @@ main > section {
 .feature-article-image img {
   width: 100%;
   display: block;
+  --media-shift: 0px;
+  transform: translate3d(0, var(--media-shift), 0) scale(1);
   transition: transform var(--dur-4) var(--ease-out);
+  will-change: transform;
 }
 
 .feature-article-image:hover img {
-  transform: scale(1.04);
+  transform: translate3d(0, var(--media-shift), 0) scale(1.04);
 }
 
 
 /* =========================================================
-   17. News
+   19. News
    ========================================================= */
 
 .news-grid {
@@ -1779,6 +2062,8 @@ main > section {
               box-shadow var(--dur-2) var(--ease-out),
               border-color var(--dur-2) var(--ease-out);
   box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
 }
 
 .news-card:hover {
@@ -1817,7 +2102,7 @@ main > section {
 
 
 /* =========================================================
-   18. Contact + appointment
+   20. Contact + appointment
    ========================================================= */
 
 .contact-grid {
@@ -1834,6 +2119,8 @@ main > section {
   border-radius: var(--radius-lg);
   padding: 2.5rem;
   box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
 }
 
 .contact-card h3 {
@@ -1939,7 +2226,6 @@ main > section {
 }
 
 .appointment-card::before {
-  content: "";
   position: absolute;
   top: -40%;
   right: -20%;
@@ -1948,6 +2234,8 @@ main > section {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(201, 115, 71, 0.22), transparent 70%);
   pointer-events: none;
+  opacity: 1;
+  transform: none;
 }
 
 .appointment-card::after {
@@ -1998,7 +2286,7 @@ main > section {
 
 
 /* =========================================================
-   19. Newsletter
+   21. Newsletter
    ========================================================= */
 
 #newsletter {
@@ -2103,7 +2391,7 @@ main > section {
 
 
 /* =========================================================
-   20. Footer
+   22. Footer
    ========================================================= */
 
 .site-footer {
@@ -2361,7 +2649,7 @@ main > section {
 
 
 /* =========================================================
-   21. Scroll-reveal animation
+   23. Scroll-reveal animation
    (subtle, respects reduced-motion)
    ========================================================= */
 
@@ -2391,10 +2679,18 @@ main > section {
 
 
 /* =========================================================
-   22. Responsive
+   24. Responsive
    ========================================================= */
 
 @media (max-width: 1024px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .care-path-grid {
+    grid-template-columns: 1fr;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: 2.5rem 1.5rem;
@@ -2484,7 +2780,8 @@ main > section {
   .involved-layout,
   .feature-article,
   .contact-grid,
-  .newsletter {
+  .newsletter,
+  .trust-strip {
     grid-template-columns: 1fr;
   }
 
@@ -2507,11 +2804,16 @@ main > section {
   }
 
   .hero-fullbleed-overlay {
-    padding-block: 7rem 4rem;
+    padding-block: 5rem 0.9rem;
+  }
+
+  .hero-scroll-cue {
+    margin-top: 1rem;
   }
 
   .hero-meta,
   .hero-meta-light {
+    flex-wrap: wrap;
     gap: 1rem 1.5rem;
   }
 
@@ -2603,6 +2905,14 @@ main > section {
     font-size: clamp(2.2rem, 7vw, 3rem);
   }
 
+  .hero-fullbleed-content {
+    min-height: calc(100svh - var(--header-height) - 5.5rem);
+  }
+
+  .hero-lead {
+    font-size: 0.93rem;
+  }
+
   .hero-cta-row {
     flex-direction: column;
     align-items: stretch;
@@ -2611,5 +2921,10 @@ main > section {
   .hero-cta-row .button,
   .hero-cta-row .button-ghost {
     width: 100%;
+  }
+
+  .trust-pill,
+  .care-step {
+    padding-inline: 1.35rem;
   }
 }

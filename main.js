@@ -13,6 +13,10 @@
     menuToggle.addEventListener("click", function () {
       const isOpen = navLinks.classList.toggle("open");
       menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.setAttribute(
+        "aria-label",
+        isOpen ? "Close navigation menu" : "Open navigation menu"
+      );
     });
 
     // Close menu when an anchor is clicked on mobile
@@ -96,19 +100,32 @@
     const grantOrg = document.getElementById("grant-org");
     const grantName = document.getElementById("grant-name");
     const grantYear = document.getElementById("grant-year");
+    const grantCaption = document.querySelector(".grant-caption");
     let grantIndex = 0;
     let grantTimer = null;
+    let grantSwapTimer = null;
 
     function renderGrantSlide(index) {
       grantIndex = (index + grantSlides.length) % grantSlides.length;
       const slide = grantSlides[grantIndex];
-      grantStageImage.src = slide.src;
-      grantStageImage.alt = slide.alt;
-      grantStageImage.dataset.index = String(grantIndex);
-      if (grantAmount) grantAmount.textContent = slide.amount;
-      if (grantOrg) grantOrg.textContent = slide.org;
-      if (grantName) grantName.textContent = slide.name;
-      if (grantYear) grantYear.textContent = slide.year;
+      grantStageImage.classList.add("is-swapping");
+      if (grantCaption) {
+        grantCaption.classList.add("is-swapping");
+      }
+      window.clearTimeout(grantSwapTimer);
+      grantSwapTimer = window.setTimeout(function () {
+        grantStageImage.src = slide.src;
+        grantStageImage.alt = slide.alt;
+        grantStageImage.dataset.index = String(grantIndex);
+        if (grantAmount) grantAmount.textContent = slide.amount;
+        if (grantOrg) grantOrg.textContent = slide.org;
+        if (grantName) grantName.textContent = slide.name;
+        if (grantYear) grantYear.textContent = slide.year;
+        grantStageImage.classList.remove("is-swapping");
+        if (grantCaption) {
+          grantCaption.classList.remove("is-swapping");
+        }
+      }, 140);
 
       grantDots.forEach(function (dot, dotIndex) {
         dot.classList.toggle("is-active", dotIndex === grantIndex);
@@ -289,14 +306,60 @@
     yearEl.textContent = new Date().getFullYear();
   }
 
-  /* ---------- Scroll reveal (subtle fade-up on enter) ---------- */
+  /* ---------- Subtle media parallax ---------- */
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const parallaxTargets = reduceMotion
+    ? []
+    : [
+        {
+          el: document.querySelector(".hero-fullbleed-image"),
+          factor: 0.045,
+          limit: 26,
+        },
+        {
+          el: document.querySelector(".about-visual img"),
+          factor: 0.03,
+          limit: 16,
+        },
+        {
+          el: document.querySelector(".involved-image img"),
+          factor: 0.035,
+          limit: 18,
+        },
+        {
+          el: document.querySelector(".feature-article-image img"),
+          factor: 0.032,
+          limit: 18,
+        },
+      ].filter(function (item) {
+        return item.el;
+      });
 
+  if (parallaxTargets.length) {
+    function syncParallax() {
+      parallaxTargets.forEach(function (item) {
+        const rect = item.el.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || 1;
+        if (rect.bottom < 0 || rect.top > viewportHeight) return;
+        const offset = (rect.top + rect.height / 2 - viewportHeight / 2) * item.factor;
+        const translate = Math.max(Math.min(offset, item.limit), -item.limit);
+        item.el.style.setProperty("--media-shift", translate.toFixed(2) + "px");
+      });
+    }
+
+    syncParallax();
+    window.addEventListener("scroll", syncParallax, { passive: true });
+    window.addEventListener("resize", syncParallax);
+  }
+
+  /* ---------- Scroll reveal (subtle fade-up on enter) ---------- */
   if (!reduceMotion) {
     const revealSelectors = [
+      ".trust-strip > *",
       ".section-head",
       ".stats-grid",
       ".services-grid > *",
+      ".care-path-grid > *",
       ".about-grid > *",
       ".story-wrap > *",
       ".grant-showcase",
